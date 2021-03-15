@@ -41,6 +41,65 @@ public class Invoice {
         this.gros = Money.ZERO;
     }
 
+    public static final class InvoiceBuilder {
+
+        private ClientData client;
+        private Money net = Money.ZERO;
+        private Money gros = Money.ZERO;
+        private List<InvoiceLine> items = new ArrayList<>();
+        private Id id;
+
+        private InvoiceBuilder() {}
+
+        public InvoiceBuilder setClient(ClientData clientData) {
+            this.client = clientData;
+            return this;
+        }
+
+        public InvoiceBuilder setNet(Money net) {
+            this.net = net;
+            return this;
+        }
+
+        public InvoiceBuilder setGros(Money gros) {
+            this.gros = gros;
+            return this;
+        }
+
+        public InvoiceBuilder setItems(List<InvoiceLine> items) {
+            this.items = items;
+            return this;
+        }
+
+        public InvoiceBuilder setId(Id id) {
+            this.id = id;
+            return this;
+        }
+
+        public InvoiceBuilder addItem(InvoiceLine item) {
+            this.items.add(item);
+            this.addNet(item.getNet());
+            this.addGros(item.getGros());
+            return this;
+        }
+
+        private void addNet(Money net) {
+            this.net.add(net);
+        }
+
+        private void addGros(Money gros) {
+            this.gros.add(gros);
+        }
+
+        public Invoice build() {
+            Invoice invoice = new Invoice(this.id, this.client);
+            invoice.gros = this.gros;
+            invoice.items = this.items;
+            invoice.net = this.net;
+            return invoice;
+        }
+    }
+
     public void addItem(InvoiceLine item) {
         items.add(item);
 
